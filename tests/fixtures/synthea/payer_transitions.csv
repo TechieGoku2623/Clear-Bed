@@ -1,0 +1,7 @@
+PATIENT,MEMBERID,START_DATE,END_DATE,PAYER,SECONDARY_PAYER,PLAN_OWNERSHIP,OWNER_NAME
+p1,m1,2020-01-01T00:00:00Z,,pay-mcare,,Government,Medicare
+p2,m2,2020-01-01T00:00:00Z,,pay-mcaid,,Government,Medicaid
+p3,m3,2020-01-01T00:00:00Z,,pay-bcbs,,Private,Blue Cross Blue Shield
+p4,m4,2020-01-01T00:00:00Z,,pay-mcare,,Government,Medicare
+p5,m5,2020-01-01T00:00:00Z,,pay-none,,Private,NO_INSURANCE
+p6,m6,2020-01-01T00:00:00Z,,pay-bcbs,,Private,Blue Cross Blue Shield

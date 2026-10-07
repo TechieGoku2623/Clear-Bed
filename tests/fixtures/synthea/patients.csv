@@ -1,0 +1,7 @@
+Id,BIRTHDATE,DEATHDATE,SSN,DRIVERS,PASSPORT,PREFIX,FIRST,MIDDLE,LAST,SUFFIX,MAIDEN,MARITAL,RACE,ETHNICITY,GENDER,BIRTHPLACE,ADDRESS,CITY,STATE,COUNTY,FIPS,ZIP,LAT,LON,HEALTHCARE_EXPENSES,HEALTHCARE_COVERAGE,INCOME
+p1,1941-03-01,,999-00-0001,,,Ms.,Ada,Q,Fixture,,Fixture,M,white,nonhispanic,F,Boston,1 Fixture St,Boston,MA,Suffolk,25025,02118,42.33,-71.07,1000,500,20000
+p2,1944-06-15,,999-00-0002,,,Mr.,Lin,Q,Fixture,,Fixture,S,black,nonhispanic,M,Boston,2 Fixture St,Boston,MA,Suffolk,25025,02115,42.34,-71.08,1000,500,20000
+p3,1938-01-20,,999-00-0003,,,Ms.,Nora,Q,Fixture,,Fixture,W,white,hispanic,F,Boston,3 Fixture St,Boston,MA,Suffolk,25025,02130,42.31,-71.11,1000,500,20000
+p4,1953-09-09,,999-00-0004,,,Mr.,Omar,Q,Fixture,,Fixture,M,asian,nonhispanic,M,Boston,4 Fixture St,Boston,MA,Suffolk,25025,02118,42.33,-71.07,1000,500,20000
+p5,1966-04-04,,999-00-0005,,,Ms.,Priya,Q,Fixture,,Fixture,S,white,nonhispanic,F,Boston,5 Fixture St,Boston,MA,Suffolk,25025,02118,42.33,-71.07,1000,500,20000
+p6,1978-12-12,,999-00-0006,,,Mr.,Seth,Q,Fixture,,Fixture,S,other,hispanic,M,Boston,6 Fixture St,Boston,MA,Suffolk,25025,02115,42.34,-71.08,1000,500,20000

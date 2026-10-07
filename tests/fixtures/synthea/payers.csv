@@ -1,0 +1,5 @@
+Id,NAME,OWNERSHIP,ADDRESS,CITY,STATE_HEADQUARTERED,ZIP,PHONE
+pay-mcare,Medicare,Government,1 Payer Way,Boston,MA,02118,555-0100
+pay-mcaid,Medicaid,Government,1 Payer Way,Boston,MA,02118,555-0101
+pay-bcbs,Blue Cross Blue Shield,Private,1 Payer Way,Boston,MA,02118,555-0102
+pay-none,NO_INSURANCE,Private,1 Payer Way,Boston,MA,02118,555-0103
