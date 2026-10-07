@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: stg_patients
+    description: Patients with direct identifiers removed.
+    columns:
+      - name: patient_id
+        tests: [not_null, unique]
+      - name: birthdate
+        tests: [not_null]
+      - name: gender
+        tests: [not_null]
+  - name: stg_encounters
+    columns:
+      - name: encounter_id
+        tests: [not_null, unique]
+      - name: patient_id
+        tests: [not_null]
+      - name: encounter_class
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - ambulatory
+                  - emergency
+                  - inpatient
+                  - outpatient
+                  - wellness
+                  - urgentcare
+                  - virtual
+                  - home
+                  - hospice
+                  - snf
+  - name: stg_conditions
+    columns:
+      - name: patient_id
+        tests: [not_null]
+  - name: stg_medications
+    columns:
+      - name: patient_id
+        tests: [not_null]
+  - name: stg_procedures
+    columns:
+      - name: patient_id
+        tests: [not_null]
+  - name: stg_observations
+    columns:
+      - name: patient_id
+        tests: [not_null]
+  - name: stg_payers
+    columns:
+      - name: payer_id
+        tests: [not_null, unique]
+  - name: stg_payer_transitions
+    columns:
+      - name: patient_id
+        tests: [not_null]
+  - name: stg_snf
+    description: Massachusetts nursing homes. Capability flags are synthetic.
+    columns:
+      - name: ccn
+        tests: [not_null, unique]
+      - name: facility_name
+        tests: [not_null]
+      - name: state
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["MA"]

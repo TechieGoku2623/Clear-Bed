@@ -1,0 +1,55 @@
+match_type,match_value,condition_group,priority
+code,359817006,hip_fracture,30
+code,263225007,hip_fracture,30
+code,230690007,stroke,20
+code,432504007,stroke,20
+code,84114007,heart_failure,50
+code,88805009,heart_failure,50
+code,13645005,copd,60
+code,185086009,copd,60
+code,91302008,sepsis,10
+code,233604007,pneumonia,40
+code,26929004,dementia,80
+code,44054006,diabetes,90
+code,709044004,ckd,70
+code,431855005,ckd,70
+description,hip fracture,hip_fracture,30
+description,fracture of neck of femur,hip_fracture,30
+description,femoral neck,hip_fracture,30
+description,stroke,stroke,20
+description,cerebral infarction,stroke,20
+description,cerebrovascular accident,stroke,20
+description,heart failure,heart_failure,50
+description,congestive heart,heart_failure,50
+description,chronic obstructive,copd,60
+description,copd,copd,60
+description,sepsis,sepsis,10
+description,pneumonia,pneumonia,40
+description,dementia,dementia,80
+description,alzheimer,dementia,80
+description,diabetes,diabetes,90
+description,diabetic,diabetes,90
+description,chronic kidney,ckd,70
+description,dialysis,ckd,70
+description,end-stage renal,ckd,70
+description,obesity,obesity,100
+description,body mass index 30,obesity,100
+description,depress,behavioral,110
+description,anxiety,behavioral,110
+description,bipolar,behavioral,110
+description,schizophren,behavioral,110
+description,opioid,substance,120
+description,alcohol abuse,substance,120
+description,alcohol dependence,substance,120
+description,substance,substance,120
+description,malignant,cancer,130
+description,carcinoma,cancer,130
+description,fracture,fracture_other,140
+description,urinary tract,urinary,150
+description,drug abuse,substance,120
+description,myocardial infarct,acs,15
+description,myocardial infarction,acs,15
+description,appendicitis,appendicitis,160
+description,fracture of hip,hip_fracture,30
+description,neck of femur,hip_fracture,30
+description,intracerebral hemorrhage,stroke,20
