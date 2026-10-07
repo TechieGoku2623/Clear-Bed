@@ -34,6 +34,31 @@ def _settings() -> Settings:
     return get_settings()
 
 
+def _facilities_by_state(con: Any) -> dict[str, int]:
+    """Count nursing homes by state. Missing catalog returns an empty map."""
+    try:
+        columns = {str(row[0]) for row in con.execute("describe staging.stg_snf").fetchall()}
+    except Exception:  # noqa: BLE001 — a fixture warehouse may not have this table
+        return {}
+    if "state" not in columns:
+        return {}
+    rows = con.execute(
+        "select state, count(*) from staging.stg_snf group by 1 order by 2 desc"
+    ).fetchall()
+    return {str(row[0]): int(row[1]) for row in rows if row[0]}
+
+
+def _catalog_note(counts: dict[str, int]) -> str:
+    total = sum(counts.values())
+    if not total:
+        return "The United States nursing-home catalog is not loaded."
+    return (
+        f"{total:,} CMS Care Compare nursing homes across {len(counts)} states and territories. "
+        "Matches are ranked from this hospital. "
+        "Dialysis, trach, behavioral, bariatric, and response hours are synthetic."
+    )
+
+
 def require_api_key(
     x_api_key: str = Header(default=""),
     settings: Settings = Depends(_settings),
@@ -88,6 +113,7 @@ def about(_: None = Depends(require_api_key)) -> dict[str, Any]:
         "limitations": [
             "Labels are a synthetic function of admission features. Metrics are not clinical validation.",
             "SNF capability flags and response hours are synthetic and labeled as such.",
+            "The scored demo census is a synthetic Massachusetts population. The nursing-home catalog is the national CMS file, and matches are ranked from the configured hospital ZIP.",
             "Knowledge-base rules are drafts. Verify them before operational use.",
             f"Cost uses an assumed ${settings.cost_per_bed_day:,.0f} per bed-day, not a finance-system figure.",
             "Referrals are recorded only after a person approves them. Nothing is auto-sent.",
@@ -181,6 +207,7 @@ def leadership(_: None = Depends(require_api_key)) -> LeadershipResponse:
             where facility_ccn <> 'ACTION'
             """
         ).fetchall()
+        facilities_by_state = _facilities_by_state(con)
     finally:
         con.close()
     simulated = len(history) < 2
@@ -230,6 +257,10 @@ def leadership(_: None = Depends(require_api_key)) -> LeadershipResponse:
         series_note=series_note,
         simulated_backcast=simulated and bool(history),
         referrals_by_status=dict(counts),
+        facilities_by_state=facilities_by_state,
+        facility_count=sum(facilities_by_state.values()),
+        state_count=len(facilities_by_state),
+        catalog_note=_catalog_note(facilities_by_state),
     )
 
 

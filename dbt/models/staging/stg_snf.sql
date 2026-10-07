@@ -25,6 +25,6 @@ select
     c.accepts_bariatric,
     c.typical_response_hours,
     c.capability_source
-from {{ source('raw', 'cms_snf_ma') }} as s
+from {{ source('raw', 'cms_snf') }} as s
 left join {{ source('raw', 'snf_capabilities_synthetic') }} as c
     on s.ccn = c.ccn

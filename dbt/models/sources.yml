@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: raw
     schema: raw
-    description: Synthea CSV tables and the Massachusetts CMS nursing-home extract.
+    description: Synthea CSV tables and the United States CMS nursing-home extract.
     tables:
       - name: patients
       - name: encounters
@@ -13,8 +13,8 @@ sources:
       - name: observations
       - name: payers
       - name: payer_transitions
-      - name: cms_snf_ma
-        description: Real CMS Care Compare nursing homes filtered to Massachusetts.
+      - name: cms_snf
+        description: Real CMS Care Compare nursing homes for US states and territories.
       - name: snf_capabilities_synthetic
         description: >
           Seeded synthetic acceptance profile. Not reported by CMS.

@@ -57,14 +57,11 @@ models:
       - name: patient_id
         tests: [not_null]
   - name: stg_snf
-    description: Massachusetts nursing homes. Capability flags are synthetic.
+    description: United States nursing homes. Capability flags are synthetic.
     columns:
       - name: ccn
         tests: [not_null, unique]
       - name: facility_name
         tests: [not_null]
       - name: state
-        tests:
-          - accepted_values:
-              arguments:
-                values: ["MA"]
+        tests: [not_null]

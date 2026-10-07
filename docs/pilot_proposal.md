@@ -7,7 +7,7 @@ One Boston hospital. No fee for 60 days. The pilot shows, on admission, which in
 ## What the hospital gets
 
 - A morning worklist ranked by stuck risk, with the five reasons for each flag written in plain language.
-- Facility matches against real Massachusetts skilled nursing facilities from CMS Care Compare, scored by payer, care needs, open beds, and distance. The score breakdown is visible.
+- Facility matches against real United States skilled nursing facilities from CMS Care Compare, scored by payer, care needs, open beds, and distance from the pilot hospital. The score breakdown is visible.
 - A referral draft that marks missing items `[NEEDS INPUT]` and cites the rule it checked, including Medicare's three-day inpatient stay.
 - A leadership view of projected avoidable bed-days. The dollar figure uses an assumed cost per bed-day (default $2,500) and is labeled as an assumption.
 - An audit log of every approval. Nothing is marked sent until a case manager approves it. The pilot build does not transmit packets to facilities.

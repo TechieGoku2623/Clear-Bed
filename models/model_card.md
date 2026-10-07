@@ -4,7 +4,7 @@ Trained: 2026-10-07T02:35:18.281025+00:00
 
 ## Data
 
-Synthetic Synthea inpatient stays for Massachusetts, joined to a seeded labeling function (`dbt/seeds/labeling_rules.csv`). CMS facility data is not an input to these models.
+Synthetic Synthea inpatient stays, joined to a seeded labeling function (`dbt/seeds/labeling_rules.csv`). The checked-in demo population is Massachusetts. CMS facility data is not an input to these models. The placement catalog is the national CMS Care Compare nursing-home file.
 
 Gender and race are excluded from the model matrix and reported only in `reports/fairness.md`.
 

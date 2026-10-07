@@ -2,8 +2,8 @@
 
 Real columns come from the CMS "Nursing Home Provider Information" file.
 Headers are inspected and mapped; they are not assumed to arrive under one
-spelling. Only Massachusetts rows are kept. Missing coordinates are filled
-from ZIP centroids.
+spelling. Every US state and territory in the file is kept. Missing
+coordinates are filled from ZIP centroids.
 
 ``raw.snf_capabilities_synthetic`` is seeded and synthetic. CMS does not
 publish dialysis, trach/vent, behavioral, bariatric, or response-time flags.
@@ -122,12 +122,12 @@ def geocode_missing(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean_cms_frame(raw: pd.DataFrame) -> pd.DataFrame:
-    """Map headers, keep Massachusetts, and derive open-bed and Medicaid flags."""
+    """Map headers, keep US states and territories, and derive open-bed flags."""
     mapping = map_headers([str(column) for column in raw.columns])
     frame = pd.DataFrame({canonical: raw[original] for canonical, original in mapping.items()})
     frame["state"] = frame["state"].astype(str).str.strip().str.upper()
-    frame = frame.loc[frame["state"].isin(["MA", "MASSACHUSETTS"])].copy()
-    frame["state"] = "MA"
+    frame["state"] = frame["state"].replace({"MASSACHUSETTS": "MA"})
+    frame = frame.loc[frame["state"].str.fullmatch(r"[A-Z]{2}", na=False)].copy()
     frame["zip"] = frame["zip"].map(_zip5)
     frame["ccn"] = frame["ccn"].astype(str).str.strip()
     frame = frame.loc[frame["ccn"].ne("") & frame["ccn"].ne("nan")]
@@ -190,7 +190,7 @@ def ensure_cms_csv(settings: Settings, *, refresh: bool = False) -> Path:
 
 
 def load_cms_csv(csv_path: Path, warehouse_path: Path, *, seed: int = 42) -> dict[str, int]:
-    """Load Massachusetts SNFs and the synthetic capability table."""
+    """Load United States SNFs and the synthetic capability table."""
     raw = pd.read_csv(csv_path, dtype=str, keep_default_na=False)
     clean = clean_cms_frame(raw)
     capabilities = synthetic_capabilities(clean["ccn"].tolist(), seed)
@@ -201,7 +201,8 @@ def load_cms_csv(csv_path: Path, warehouse_path: Path, *, seed: int = 42) -> dic
     try:
         con.execute("create schema if not exists raw")
         con.register("_cms", clean)
-        con.execute("create or replace table raw.cms_snf_ma as select * from _cms")
+        con.execute("create or replace table raw.cms_snf as select * from _cms")
+        con.execute("drop table if exists raw.cms_snf_ma")
         con.register("_cap", capabilities)
         con.execute("create or replace table raw.snf_capabilities_synthetic as select * from _cap")
         con.unregister("_cms")
@@ -215,15 +216,15 @@ def load_cms_csv(csv_path: Path, warehouse_path: Path, *, seed: int = 42) -> dic
         capabilities=int(len(capabilities)),
         capability_source="synthetic_seeded_profile",
     )
-    return {"cms_snf_ma": int(len(clean)), "snf_capabilities_synthetic": int(len(capabilities))}
+    return {"cms_snf": int(len(clean)), "snf_capabilities_synthetic": int(len(capabilities))}
 
 
 def main() -> None:
-    """Download the CMS file if needed, load MA facilities, and print counts."""
+    """Download the CMS file if needed, load US facilities, and print counts."""
     settings = get_settings()
     path = ensure_cms_csv(settings)
     counts = load_cms_csv(path, settings.resolved_warehouse_path, seed=settings.synthea_seed)
-    print(f"raw.cms_snf_ma  {counts['cms_snf_ma']}")
+    print(f"raw.cms_snf  {counts['cms_snf']}")
     print(
         "raw.snf_capabilities_synthetic  "
         f"{counts['snf_capabilities_synthetic']}  (synthetic seeded profile, not CMS)"
