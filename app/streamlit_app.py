@@ -6,10 +6,11 @@ Approving a packet records it as sent. It does not transmit anything.
 
 from __future__ import annotations
 
+import json
 import os
+from pathlib import Path
 from typing import Any
 
-import pydeck as pdk
 import requests
 import streamlit as st
 
@@ -370,49 +371,64 @@ def _facility_map(plan: dict[str, Any]) -> None:
     ]
     if not facility_rows:
         return
-    hospital_row = [
+    payload = json.dumps(
         {
-            "latitude": hospital["latitude"],
-            "longitude": hospital["longitude"],
-            "facility_name": "Hospital",
-            "score": "",
+            "hospital": {
+                "latitude": float(hospital["latitude"]),
+                "longitude": float(hospital["longitude"]),
+            },
+            "facilities": facility_rows,
         }
-    ]
-    view = pdk.ViewState(
-        latitude=float(hospital["latitude"]),
-        longitude=float(hospital["longitude"]),
-        zoom=11,
     )
-    deck = pdk.Deck(
-        layers=[
-            pdk.Layer(
-                "ScatterplotLayer",
-                data=facility_rows,
-                get_position=["longitude", "latitude"],
-                get_fill_color=[31, 111, 120, 220],
-                get_radius=500,
-                pickable=True,
-            ),
-            pdk.Layer(
-                "ScatterplotLayer",
-                data=hospital_row,
-                get_position=["longitude", "latitude"],
-                get_fill_color=[22, 52, 61, 240],
-                get_radius=700,
-                pickable=True,
-            ),
-        ],
-        initial_view_state=view,
-        map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-        tooltip={"text": "{facility_name}\nscore {score}"},
-    )
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8"/>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <style>
+        html, body, #map {{ margin: 0; padding: 0; height: 340px; width: 100%; background: #f4f7f7; }}
+        .leaflet-control-attribution {{ font-size: 10px; }}
+      </style>
+    </head>
+    <body>
+      <div id="map"></div>
+      <script>
+        const data = {payload};
+        const map = L.map('map', {{zoomControl: false}}).setView(
+          [data.hospital.latitude, data.hospital.longitude], 11
+        );
+        L.tileLayer('https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        }}).addTo(map);
+        L.circleMarker([data.hospital.latitude, data.hospital.longitude], {{
+          radius: 9, color: '#ffffff', weight: 2, fillColor: '#16343d', fillOpacity: 1
+        }}).addTo(map).bindTooltip('Hospital');
+        data.facilities.forEach((facility, index) => {{
+          L.circleMarker([facility.latitude, facility.longitude], {{
+            radius: index === 0 ? 8 : 6,
+            color: '#ffffff',
+            weight: 2,
+            fillColor: '#1f6f78',
+            fillOpacity: 0.95
+          }}).addTo(map).bindTooltip(facility.facility_name);
+        }});
+        setTimeout(() => map.invalidateSize(), 150);
+      </script>
+    </body>
+    </html>
+    """
     st.subheader("Facilities")
     top = facilities[0]
     st.caption(
         f"Dark pin is the hospital. Teal pins are ranked Massachusetts nursing homes. "
         f"Top match: {top.get('facility_name')}."
     )
-    st.pydeck_chart(deck, height=340, width="stretch")
+    map_path = Path("/tmp/clearbed-facility-map.html")
+    map_path.write_text(html, encoding="utf-8")
+    st.iframe(map_path, height=340)
     note = plan.get("capability_note")
     if note:
         st.caption(str(note))
