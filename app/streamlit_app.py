@@ -22,6 +22,9 @@ BANNER = "Synthetic data — demo only"
 CSS = """
 <style>
     .stApp { background: #f4f7f7; }
+    html, body, [class*="css"] { font-size: 17px; }
+    .block-container { padding-top: 1.4rem; padding-bottom: 2rem; }
+    header[data-testid="stHeader"], footer, #MainMenu { display: none; }
     h1, h2, h3 { color: #16343d; letter-spacing: -0.02em; }
     [data-testid="stSidebar"],
     [data-testid="stSidebarContent"],
@@ -53,8 +56,8 @@ CSS = """
     }
     .demo-badge {
         position: fixed;
-        left: 16px;
-        bottom: 16px;
+        top: 12px;
+        right: 16px;
         z-index: 100000;
         background: #1f6f78;
         color: #ffffff;
@@ -63,17 +66,38 @@ CSS = """
         font-size: 12px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
+    div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        color: #16343d !important;
+    }
+    div[data-baseweb="select"] span,
+    div[data-baseweb="select"] div {
+        color: #16343d !important;
+    }
+    button[data-testid="stBaseButton-primary"] {
+        background-color: #1f6f78 !important;
+        color: #ffffff !important;
+        border: none !important;
+    }
     mark { background: #f6e2a4; padding: 0 3px; }
     .reason { margin: 4px 0; color: #16343d; }
     .gauge {
         background: #d5e2e3;
         border-radius: 999px;
-        height: 18px;
+        height: 22px;
         overflow: hidden;
-        margin: 6px 0 12px 0;
+        margin: 8px 0 14px 0;
     }
     .gauge > div { height: 100%; background: #1f6f78; }
-    .note { color: #5c7176; font-size: 0.9rem; }
+    .note { color: #5c7176; font-size: 0.95rem; }
+    .demo-card {
+        background: white;
+        border-left: 4px solid #1f6f78;
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin: 8px 0 16px 0;
+    }
+    .demo-card strong { color: #16343d; }
 </style>
 """
 
@@ -142,18 +166,21 @@ def page_leadership() -> None:
     with columns[3]:
         _kpi("Estimated cost", f"${data['estimated_cost']:,.0f}")
     st.markdown(f"<p class='note'>{data['cost_note']}</p>", unsafe_allow_html=True)
-    st.subheader("Avoidable bed-days")
-    st.caption(data["series_note"])
-    if data["series"]:
-        chart_rows = {row["day"]: row["avoidable_bed_days"] for row in data["series"]}
-        st.line_chart(chart_rows)
-    st.subheader("Referral funnel")
-    st.caption("Facility referrals only. Payer actions are excluded from this count.")
-    counts = data.get("referrals_by_status") or {}
-    if counts:
-        st.bar_chart(counts)
-    else:
-        st.info("No facility referrals have been approved or declined yet.")
+    chart_col, funnel_col = st.columns(2)
+    with chart_col:
+        st.subheader("Avoidable bed-days")
+        st.caption(data["series_note"])
+        if data["series"]:
+            chart_rows = {row["day"]: row["avoidable_bed_days"] for row in data["series"]}
+            st.line_chart(chart_rows, height=280)
+    with funnel_col:
+        st.subheader("Referral funnel")
+        st.caption("Facility referrals only. Payer actions are excluded from this count.")
+        counts = data.get("referrals_by_status") or {}
+        if counts:
+            st.bar_chart(counts, height=280)
+        else:
+            st.info("No facility referrals have been approved or declined yet.")
 
 
 def page_worklist() -> None:
@@ -172,6 +199,20 @@ def page_worklist() -> None:
     left, right = st.columns(2)
     tier = left.selectbox("Risk tier", tiers, index=0)
     barrier = right.selectbox("Predicted barrier", barriers, index=0)
+    demo = _placement_demo(rows)
+    if demo is not None:
+        st.markdown(
+            "<div class='demo-card'><strong>Placement demo.</strong> "
+            f"{demo['patient_pseudo_id']} · {demo['condition_group']} · {demo['payer_type']} · "
+            f"{demo['age_band']} · stuck {demo['stuck_prob']:.0%}. "
+            "The High filter on this census is home services and guardianship. "
+            "This Medicare stay is the one that matches nursing homes.</div>",
+            unsafe_allow_html=True,
+        )
+        if st.button("Open placement demo", type="primary"):
+            st.session_state["stay_id"] = demo["stay_id"]
+            st.session_state["goto"] = "Patient"
+            st.rerun()
     shown = [
         row
         for row in rows
@@ -207,6 +248,20 @@ def page_worklist() -> None:
         st.session_state["stay_id"] = options[label]
         st.session_state["goto"] = "Patient"
         st.rerun()
+
+
+def _placement_demo(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Pick the Medicare post-acute stay a recording should open for the map."""
+    candidates = [
+        row
+        for row in rows
+        if row.get("predicted_barrier") == "post_acute_placement"
+        and row.get("payer_type") == "medicare"
+    ]
+    if not candidates:
+        return None
+    candidates.sort(key=lambda row: float(row.get("stuck_prob") or 0), reverse=True)
+    return candidates[0]
 
 
 def _status_for(stay_id: str) -> dict[str, str]:
@@ -251,7 +306,8 @@ def page_patient() -> None:
         st.error(f"Could not load this stay. ({exc})")
         return
     probability = float(context.get("stuck_prob") or 0)
-    left, right = st.columns([2, 1])
+    plan = st.session_state.get(f"plan:{stay_id}")
+    left, right = st.columns([1.05, 1])
     with left:
         st.subheader(f"{context.get('risk_tier', '').title()} risk · {probability:.0%}")
         st.markdown(
@@ -261,29 +317,105 @@ def page_patient() -> None:
         st.markdown("**Why this flag**")
         for line in _reason_lines(context.get("top_reasons") or []):
             st.markdown(f"<p class='reason'>{line}</p>", unsafe_allow_html=True)
-    with right:
-        st.markdown(f"**Age band** {context.get('age_band')} ({context.get('age_at_admit')})")
-        st.markdown(f"**Condition** {context.get('condition_group')}")
-        st.markdown(f"**Payer** {context.get('payer_type')}")
-        st.markdown(
-            f"**Day of stay** {context.get('day_of_stay')} vs expected {float(context.get('expected_los') or 0):.1f}"
-        )
-        st.markdown(f"**Route** {context.get('workflow_route')}")
         alone = "yes" if context.get("lives_alone_proxy") else "no"
-        st.markdown(f"**Lives alone (synthetic proxy)** {alone}")
-    if st.button("Generate plan", type="primary"):
-        with st.spinner("Matching facilities and drafting. Nothing is sent."):
-            try:
-                plan = api_post("/plans", {"stay_id": stay_id})
-            except requests.RequestException as exc:
-                st.error(f"Plan failed. ({exc})")
-                return
-        st.session_state[f"plan:{stay_id}"] = plan
-    plan = st.session_state.get(f"plan:{stay_id}")
+        st.caption(
+            f"{context.get('age_band')} ({context.get('age_at_admit')}) · "
+            f"{context.get('condition_group')} · {context.get('payer_type')} · "
+            f"day {context.get('day_of_stay')} vs expected {float(context.get('expected_los') or 0):.1f} · "
+            f"route {context.get('workflow_route')} · lives alone {alone}"
+        )
+        if st.button("Generate plan", type="primary"):
+            with st.spinner("Matching facilities and drafting. Nothing is sent."):
+                try:
+                    plan = api_post("/plans", {"stay_id": stay_id})
+                except requests.RequestException as exc:
+                    st.error(f"Plan failed. ({exc})")
+                    return
+            st.session_state[f"plan:{stay_id}"] = plan
+            st.rerun()
+    with right:
+        if plan and (plan.get("facilities") or []):
+            _facility_map(plan)
+        else:
+            st.markdown(f"**Age band** {context.get('age_band')} ({context.get('age_at_admit')})")
+            st.markdown(f"**Condition** {context.get('condition_group')}")
+            st.markdown(f"**Payer** {context.get('payer_type')}")
+            st.markdown(
+                f"**Day of stay** {context.get('day_of_stay')} vs expected "
+                f"{float(context.get('expected_los') or 0):.1f}"
+            )
+            st.markdown(f"**Route** {context.get('workflow_route')}")
+            st.markdown(f"**Lives alone (synthetic proxy)** {alone}")
     if not plan:
-        st.caption("Generate a plan to see facilities, the score breakdown, and the draft packet.")
+        st.caption("Generate a plan to see the map, the score breakdown, and the draft packet.")
         return
     _render_plan(stay_id, plan)
+
+
+def _facility_map(plan: dict[str, Any]) -> None:
+    """Boston map of the hospital and ranked nursing homes. Drawn once, beside the reasons."""
+    facilities = plan.get("facilities") or []
+    hospital = plan.get("hospital") or {}
+    if hospital.get("latitude") is None or hospital.get("longitude") is None:
+        return
+    facility_rows = [
+        {
+            "latitude": item["latitude"],
+            "longitude": item["longitude"],
+            "facility_name": item["facility_name"],
+            "score": item["score"],
+        }
+        for item in facilities
+        if item.get("latitude") is not None and item.get("longitude") is not None
+    ]
+    if not facility_rows:
+        return
+    hospital_row = [
+        {
+            "latitude": hospital["latitude"],
+            "longitude": hospital["longitude"],
+            "facility_name": "Hospital",
+            "score": "",
+        }
+    ]
+    view = pdk.ViewState(
+        latitude=float(hospital["latitude"]),
+        longitude=float(hospital["longitude"]),
+        zoom=11,
+    )
+    deck = pdk.Deck(
+        layers=[
+            pdk.Layer(
+                "ScatterplotLayer",
+                data=facility_rows,
+                get_position=["longitude", "latitude"],
+                get_fill_color=[31, 111, 120, 220],
+                get_radius=500,
+                pickable=True,
+            ),
+            pdk.Layer(
+                "ScatterplotLayer",
+                data=hospital_row,
+                get_position=["longitude", "latitude"],
+                get_fill_color=[22, 52, 61, 240],
+                get_radius=700,
+                pickable=True,
+            ),
+        ],
+        initial_view_state=view,
+        map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        tooltip={"text": "{facility_name}\nscore {score}"},
+    )
+    st.subheader("Facilities")
+    top = facilities[0]
+    st.caption(
+        f"Dark pin is the hospital. Teal pins are ranked Massachusetts nursing homes. "
+        f"Top match: {top.get('facility_name')}."
+    )
+    st.pydeck_chart(deck, height=340, width="stretch")
+    note = plan.get("capability_note")
+    if note:
+        st.caption(str(note))
 
 
 def _render_plan(stay_id: str, plan: dict[str, Any]) -> None:
@@ -295,57 +427,8 @@ def _render_plan(stay_id: str, plan: dict[str, Any]) -> None:
     for action in plan.get("next_actions") or []:
         st.markdown(f"- {action}")
     facilities = plan.get("facilities") or []
-    hospital = plan.get("hospital") or {}
-    if facilities and hospital:
-        st.subheader("Facilities")
-        st.caption(plan.get("capability_note") or "")
-        facility_rows = [
-            {
-                "latitude": item["latitude"],
-                "longitude": item["longitude"],
-                "facility_name": item["facility_name"],
-                "score": item["score"],
-            }
-            for item in facilities
-            if item.get("latitude") is not None
-        ]
-        hospital_row = [
-            {
-                "latitude": hospital["latitude"],
-                "longitude": hospital["longitude"],
-                "facility_name": "Hospital",
-                "score": "",
-            }
-        ]
-        view = pdk.ViewState(
-            latitude=float(hospital["latitude"]),
-            longitude=float(hospital["longitude"]),
-            zoom=11,
-        )
-        deck = pdk.Deck(
-            layers=[
-                pdk.Layer(
-                    "ScatterplotLayer",
-                    data=facility_rows,
-                    get_position=["longitude", "latitude"],
-                    get_fill_color=[31, 111, 120, 200],
-                    get_radius=350,
-                    pickable=True,
-                ),
-                pdk.Layer(
-                    "ScatterplotLayer",
-                    data=hospital_row,
-                    get_position=["longitude", "latitude"],
-                    get_fill_color=[22, 52, 61, 230],
-                    get_radius=450,
-                    pickable=True,
-                ),
-            ],
-            initial_view_state=view,
-            map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-            tooltip={"text": "{facility_name}\nscore {score}"},
-        )
-        st.pydeck_chart(deck)
+    if facilities:
+        st.subheader("Score breakdown")
         st.dataframe(
             [
                 {
@@ -383,7 +466,9 @@ def _render_plan(stay_id: str, plan: dict[str, Any]) -> None:
         for packet in packets:
             ccn = str(packet["facility_ccn"])
             status = statuses.get(ccn, "pending_approval")
-            with st.expander(f"{packet.get('facility_name')} · {status}", expanded=True):
+            with st.expander(
+                f"{packet.get('facility_name')} · {status}", expanded=packet is packets[0]
+            ):
                 if status == "sent":
                     st.success(
                         "Status: Sent. This is a local record. The packet was not transmitted."
@@ -400,12 +485,14 @@ def _render_plan(stay_id: str, plan: dict[str, Any]) -> None:
                     st.markdown("**Missing**")
                     for item in missing:
                         st.markdown(f"- {item}")
-                st.text_area(
-                    "Edit draft locally",
-                    value=packet.get("markdown") or "",
-                    key=f"edit-{stay_id}-{ccn}",
-                    height=180,
-                )
+                with st.expander("Edit draft locally"):
+                    st.text_area(
+                        "Local edit",
+                        value=packet.get("markdown") or "",
+                        key=f"edit-{stay_id}-{ccn}",
+                        height=140,
+                        label_visibility="collapsed",
+                    )
                 decided = status in {"sent", "declined"}
                 approve, reject = st.columns(2)
                 if approve.button(
