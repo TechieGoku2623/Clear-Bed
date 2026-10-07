@@ -1,0 +1,38 @@
+# Share ./data, ./models, and ./reports with a warehouse built by `make all`
+# on the host. The API falls back to a written template if Ollama is down.
+# Start the optional model with: docker compose --profile llm up
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.example
+    environment:
+      DATA_MODE: synthetic
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      OLLAMA_BASE_URL: http://ollama:11434
+      API_BASE_URL: http://api:8000
+      HOSPITAL_ZIP: "02118"
+      API_KEY: ${API_KEY:-demo-key}
+      COST_PER_BED_DAY: "2500"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./knowledge:/app/knowledge
+  ui:
+    build: .
+    command: streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      API_BASE_URL: http://api:8000
+      API_KEY: ${API_KEY:-demo-key}
+    depends_on:
+      - api
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["llm"]
+    ports:
+      - "11434:11434"
