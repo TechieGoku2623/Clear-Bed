@@ -1,0 +1,13 @@
+.venv
+.git
+data
+mlruns
+reports
+models
+dbt/target
+dbt/logs
+**/__pycache__
+**/*.duckdb
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
