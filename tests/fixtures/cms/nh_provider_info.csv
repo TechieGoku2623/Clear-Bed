@@ -1,0 +1,11 @@
+"CMS Certification Number (CCN)","Provider Name","Provider Address",City/Town,State,"ZIP Code","Number of Certified Beds","Average Number of Residents per Day","Overall Rating","Health Inspection Rating","Staffing Rating","Provider Type","Ownership Type",Latitude,Longitude
+225001,FIXTURE JAMAICA PLAIN SNF,1 Centre St,Boston,MA,02130,120,100,5,4,4,Medicare and Medicaid,Non profit - Corporation,42.309,-71.115
+225002,FIXTURE ROXBURY NURSING,100 Warren St,Boston,MA,02119,90,70,4,3,4,Medicare and Medicaid,For profit - Corporation,42.328,-71.084
+225003,FIXTURE SOUTH END CARE,20 Worcester St,Boston,MA,02118,80,60,3,3,3,Medicare and Medicaid,For profit - Individual,42.338,-71.072
+225004,FIXTURE FENWAY REHAB,200 Brookline Ave,Boston,MA,02215,150,110,5,5,4,Medicare and Medicaid,Non profit - Corporation,42.346,-71.100
+225005,FIXTURE CAMBRIDGE MEDICARE ONLY,1 Mass Ave,Cambridge,MA,02139,60,40,2,2,3,Medicare,For profit - Corporation,42.365,-71.104
+225006,FIXTURE DORCHESTER NURSING,500 Columbia Rd,Boston,MA,02125,100,95,3,2,2,Medicare and Medicaid,For profit - Corporation,42.317,-71.060
+225007,FIXTURE BRIGHTON SNF,10 Market St,Boston,MA,02135,70,50,4,4,3,Medicaid,Non profit - Corporation,42.349,-71.156
+225008,FIXTURE MISSING GEO,9 Brookline St,Cambridge,MA,02139,40,20,3,3,3,Medicare and Medicaid,For profit - Corporation,,
+225009,FIXTURE FULL CENSUS,50 Harrison Ave,Boston,MA,02111,10,40,1,1,1,Medicare and Medicaid,For profit - Corporation,42.351,-71.063
+075001,FIXTURE CONNECTICUT HOME,1 Other St,Hartford,CT,06103,80,40,4,4,4,Medicare and Medicaid,For profit - Corporation,41.760,-72.680

@@ -1,0 +1,13 @@
+Id,START,STOP,PATIENT,ORGANIZATION,PROVIDER,PAYER,ENCOUNTERCLASS,CODE,DESCRIPTION,BASE_ENCOUNTER_COST,TOTAL_CLAIM_COST,PAYER_COVERAGE,REASONCODE,REASONDESCRIPTION
+e1,2023-01-10T08:00:00Z,2023-01-18T11:00:00Z,p1,org1,prov1,pay-mcare,inpatient,32485007,Hospital admission,8000,18000,12000,359817006,Fracture of neck of femur
+e2,2022-12-01T01:00:00Z,2022-12-01T06:00:00Z,p1,org1,prov1,pay-mcare,emergency,50849002,Emergency visit,500,1200,800,,
+e3,2022-06-01T09:00:00Z,2022-06-05T10:00:00Z,p1,org1,prov1,pay-mcare,inpatient,32485007,Hospital admission,4000,9000,6000,233604007,Pneumonia
+e4,2023-03-02T07:00:00Z,2023-03-14T15:00:00Z,p2,org1,prov1,pay-mcaid,inpatient,32485007,Hospital admission,9000,22000,15000,230690007,Cerebral infarction
+e5,2023-03-01T22:00:00Z,2023-03-02T02:00:00Z,p2,org1,prov1,pay-mcaid,emergency,50849002,Emergency visit,600,1400,900,,
+e6,2022-11-02T08:00:00Z,2022-11-20T12:00:00Z,p3,org1,prov1,pay-bcbs,inpatient,32485007,Hospital admission,7000,16000,10000,26929004,Dementia
+e7,2024-02-01T06:00:00Z,2024-02-09T09:00:00Z,p4,org1,prov1,pay-mcare,inpatient,32485007,Hospital admission,6000,14000,9000,84114007,Congestive heart failure
+e8,2024-01-20T18:00:00Z,2024-01-20T23:00:00Z,p4,org1,prov1,pay-mcare,emergency,50849002,Emergency visit,500,1100,700,,
+e9,2024-05-01T04:00:00Z,2024-05-07T16:00:00Z,p5,org1,prov1,pay-none,inpatient,32485007,Hospital admission,5000,11000,0,91302008,Sepsis
+e10,2021-08-01T10:00:00Z,2021-08-04T12:00:00Z,p6,org1,prov1,pay-bcbs,inpatient,32485007,Hospital admission,3000,7000,4000,233604007,Pneumonia
+e11,2021-01-15T09:00:00Z,2021-01-15T10:00:00Z,p6,org1,prov1,pay-bcbs,wellness,185349003,Wellness visit,200,200,200,,
+e12,2024-06-01T09:00:00Z,2024-06-01T10:00:00Z,p6,org1,prov1,pay-bcbs,ambulatory,185345009,Office visit,150,150,150,,
