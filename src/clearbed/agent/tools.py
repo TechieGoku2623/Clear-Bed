@@ -68,6 +68,7 @@ class FacilityScore(BaseModel):
     ccn: str
     facility_name: str
     city: str
+    state: str = ""
     zip: str
     distance_miles: float
     overall_rating: float | None
@@ -401,8 +402,9 @@ def build_rule_findings(
     if payer in {"none", "medicaid"} or int(data.get("medicaid_pending") or 0):
         add(
             "masshealth_ltc_basics",
-            "Payer is unresolved or Medicaid. MassHealth long-term-care eligibility can stay "
-            "pending and block placement until a decision or a facility-accepted pending arrangement is documented.",
+            "Payer is unresolved or Medicaid. State Medicaid long-term-care eligibility can stay "
+            "pending and block placement until a decision is documented. "
+            "For this Massachusetts hospital, that agency is MassHealth.",
         )
     if route == "post_acute_placement":
         add(
@@ -413,12 +415,14 @@ def build_rule_findings(
         add(
             "guardianship_ma_basics",
             "Confirm whether a health care proxy already exists before anyone discusses guardianship. "
-            "Guardianship is a court process.",
+            "Guardianship is a court process. This citation is Massachusetts law, where the demo hospital sits. "
+            "Other states use their own proxy and guardianship rules.",
         )
     if route == "home_services":
         add(
             "home_services_options",
-            "Home health needs a homebound finding and a skilled need. PCA services are a separate MassHealth path.",
+            "Home health needs a homebound finding and a skilled need. "
+            "Personal care is a separate state Medicaid path. In Massachusetts that path is MassHealth.",
         )
     return findings
 
@@ -454,7 +458,7 @@ def match_facilities(
     top_k: int = 8,
     settings: Settings | None = None,
 ) -> list[FacilityScore]:
-    """Rank Massachusetts SNFs that pass payer, bed, and capability filters."""
+    """Rank United States SNFs that pass payer, bed, distance, and capability filters."""
     settings = settings or get_settings()
     context = get_patient_context(stay_id, settings)
     origin = hospital_coordinates(settings.hospital_zip)
@@ -492,6 +496,7 @@ def match_facilities(
                 ccn=str(facility["ccn"]),
                 facility_name=str(facility["facility_name"]),
                 city=str(facility.get("city") or ""),
+                state=str(facility.get("state") or ""),
                 zip=str(facility.get("zip") or ""),
                 distance_miles=round(distance, 2),
                 overall_rating=None

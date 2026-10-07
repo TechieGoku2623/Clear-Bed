@@ -1,8 +1,8 @@
 # ClearBed
 
-ClearBed predicts, on admission, which inpatients are likely to remain in a bed after they are medically ready to leave, and why. The barriers it tracks are post-acute placement, payer authorization, guardianship or capacity, and home services. An agent then matches synthetic patients to real Massachusetts skilled nursing facilities, drafts a referral packet, checks payer rules, and waits for a person to approve anything that would leave the building.
+ClearBed predicts, on admission, which inpatients are likely to remain in a bed after they are medically ready to leave, and why. The barriers it tracks are post-acute placement, payer authorization, guardianship or capacity, and home services. An agent then matches synthetic patients to real United States skilled nursing facilities, drafts a referral packet, checks payer rules, and waits for a person to approve anything that would leave the building.
 
-Massachusetts hospitals lose staffed beds to patients who are medically ready but have nowhere to go. Placement, coverage, and guardianship work happens in inboxes, so the delay is invisible until the bed-day count is already high. ClearBed makes that delay visible on admission and gives case management a sourced next step.
+Hospitals lose staffed beds to patients who are medically ready but have nowhere to go. Placement, coverage, and guardianship work happens in inboxes, so the delay is invisible until the bed-day count is already high. ClearBed makes that delay visible on admission and gives case management a sourced next step. The facility catalog is the national CMS Care Compare file. This demo hospital is in Boston, and matches are ranked from that hospital.
 
 **Synthetic patients only, unless `DATA_MODE` is changed.** Facility characteristics from CMS Care Compare are real. Acceptance profiles (dialysis, trach/vent, behavioral, bariatric, response time) are synthetic and labeled as such. This is not a medical device.
 
@@ -81,7 +81,7 @@ The loader reads `data/external/nh_provider_info.csv`. If that file is missing i
 
 `https://data.cms.gov/provider-data/api/1/datastore/query/4pq5-n9py/0/download?format=csv`
 
-The URL is `CMS_SNF_URL` in `.env`. To refresh the file by hand, download that CSV into `data/external/nh_provider_info.csv` and rerun `python -m clearbed.ingest.cms_snf_loader`. Only Massachusetts rows are kept. Missing coordinates are filled from ZIP centroids. `est_open_beds` is `certified_beds - avg_residents_per_day`, floored at 0.
+The URL is `CMS_SNF_URL` in `.env`. To refresh the file by hand, download that CSV into `data/external/nh_provider_info.csv` and rerun `python -m clearbed.ingest.cms_snf_loader`. Rows for every US state and territory in the file are kept. Missing coordinates are filled from ZIP centroids. `est_open_beds` is `certified_beds - avg_residents_per_day`, floored at 0. The loaded table is `raw.cms_snf`.
 
 `raw.snf_capabilities_synthetic` is a seeded synthetic acceptance profile. It is not reported by CMS.
 

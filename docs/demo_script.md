@@ -15,7 +15,7 @@ Add a small corner badge on every app scene: **Synthetic patient data — demo.*
 | 0:30–0:50 | ClearBed Leadership dashboard: KPIs, avoidable bed-days, cost | "This is ClearBed. On day one, it shows leadership how many bed-days the hospital is about to lose, and what it'll cost." |
 | 0:50–1:15 | Worklist sorted by risk; filter to High; hover over a patient | "Case managers get a worklist ranked by who's likely to get stuck, flagged on admission instead of on day six." |
 | 1:15–1:40 | Patient detail: risk gauge, top 5 reasons | "Every flag is explained: age, hip fracture, lives alone, Medicare with a needed skilled stay. No black box." |
-| 1:40–2:10 | Click Generate plan: map with real MA facilities, score breakdown | "The agent matches real Massachusetts skilled nursing facilities by payer, care needs, open beds and distance, and shows why each one ranks where it does." |
+| 1:40–2:10 | Click Generate plan: map with real US facilities near the hospital, score breakdown | "The agent matches real United States skilled nursing facilities by payer, care needs, open beds and distance from this hospital, and shows why each one ranks where it does." |
 | 2:10–2:30 | Draft packet: [NEEDS INPUT] highlighted, rules citation | "It drafts the referral packet, flags what's missing, and checks rules like Medicare's three-day stay with citations. It never invents clinical facts." |
 | 2:30–2:45 | Click Approve: status changes to Sent; dashboard updates | "Nothing goes out without a human approving it. Every action is logged." |
 | 2:45–3:00 | AI shot 3 (sunrise and an empty, clean bed), then end card: "ClearBed · Free 60-day pilot · Deva Choppa · 617-602-6800" | "Fewer stuck patients, more open beds. I'm looking for one Boston hospital to pilot this. Let's talk." |
@@ -83,6 +83,6 @@ Type is large, left-aligned or centered, on a dark teal field (#16343d) if the s
 
 - `DATA_MODE=synthetic` and the corner badge is in frame the whole time you are in the app.
 - Show the High filter, then open a Medicare post-acute stay for the map. On this census the two High stays route to home services and guardianship, so they will not draw facilities. A Medium Medicare stay in the 75–84 band with condition ACS or heart failure does. This Synthea seed has no hip-fracture admissions, so read the five reasons that are actually on the card (often age, cancer or heart failure, lives alone, Medicare). If a later population does include a hip fracture, use that stay and the voiceover line as written.
-- Facilities on the map are real Massachusetts nursing homes from CMS Care Compare. Say that. Do not say their acceptance of dialysis or trach care is reported by CMS; those fields are synthetic.
+- Facilities on the map are real United States nursing homes from CMS Care Compare, ranked from this Boston hospital. Say that. Do not say their acceptance of dialysis or trach care is reported by CMS; those fields are synthetic. The leadership chart is the national catalog, not only the homes on the map.
 - One approval only. Leave the audit trail able to show Sent.
 - Export H.264, 1920×1080, 24 or 30 fps, stereo audio.

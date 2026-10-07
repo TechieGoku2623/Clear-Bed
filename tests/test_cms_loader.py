@@ -32,22 +32,22 @@ def test_header_mapping_accepts_cms_names() -> None:
     assert normalize_header("City/Town") == "city town"
 
 
-def test_fixture_keeps_massachusetts_and_floors_open_beds(tmp_path: Path) -> None:
+def test_fixture_keeps_every_state_and_floors_open_beds(tmp_path: Path) -> None:
     warehouse = tmp_path / "warehouse.duckdb"
     fixture = Path(__file__).resolve().parent / "fixtures" / "cms" / "nh_provider_info.csv"
     counts = load_cms_csv(fixture, warehouse, seed=42)
-    assert counts["cms_snf_ma"] == 9
+    assert counts["cms_snf"] == 10
     con = duckdb.connect(str(warehouse))
-    states = {row[0] for row in con.execute("select distinct state from raw.cms_snf_ma").fetchall()}
-    assert states == {"MA"}
-    full = con.execute("select est_open_beds from raw.cms_snf_ma where ccn = '225009'").fetchone()
+    states = {row[0] for row in con.execute("select distinct state from raw.cms_snf").fetchall()}
+    assert states == {"MA", "CT"}
+    full = con.execute("select est_open_beds from raw.cms_snf where ccn = '225009'").fetchone()
     assert full is not None and full[0] == 0
     medicaid = con.execute(
-        "select accepts_medicaid from raw.cms_snf_ma where ccn = '225005'"
+        "select accepts_medicaid from raw.cms_snf where ccn = '225005'"
     ).fetchone()
     assert medicaid is not None and medicaid[0] is False
     missing_geo = con.execute(
-        "select latitude, longitude from raw.cms_snf_ma where ccn = '225008'"
+        "select latitude, longitude from raw.cms_snf where ccn = '225008'"
     ).fetchone()
     assert missing_geo is not None
     assert missing_geo[0] is not None and missing_geo[1] is not None

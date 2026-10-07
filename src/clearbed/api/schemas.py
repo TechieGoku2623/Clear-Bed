@@ -66,4 +66,8 @@ class LeadershipResponse(BaseModel):
     series_note: str
     simulated_backcast: bool
     referrals_by_status: dict[str, int]
+    facilities_by_state: dict[str, int] = {}
+    facility_count: int = 0
+    state_count: int = 0
+    catalog_note: str = ""
     banner: str = "Synthetic data — demo only"

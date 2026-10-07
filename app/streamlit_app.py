@@ -150,7 +150,7 @@ def page_leadership() -> None:
     st.markdown(f'<div class="banner">{BANNER}</div>', unsafe_allow_html=True)
     st.title("Leadership")
     st.caption(
-        "Bed-days the hospital is about to lose, and what that costs under the stated assumption."
+        "Bed-days this hospital is about to lose. The nursing-home catalog covers the United States."
     )
     try:
         data = api_get("/leadership")
@@ -182,6 +182,11 @@ def page_leadership() -> None:
             st.bar_chart(counts, height=280)
         else:
             st.info("No facility referrals have been approved or declined yet.")
+    counts_by_state = data.get("facilities_by_state") or {}
+    if counts_by_state:
+        st.subheader("Nursing homes across the United States")
+        st.caption(data.get("catalog_note") or "")
+        st.bar_chart(counts_by_state, height=280)
 
 
 def page_worklist() -> None:
@@ -354,7 +359,7 @@ def page_patient() -> None:
 
 
 def _facility_map(plan: dict[str, Any]) -> None:
-    """Boston map of the hospital and ranked nursing homes. Drawn once, beside the reasons."""
+    """Map of the hospital and ranked United States nursing homes, beside the reasons."""
     facilities = plan.get("facilities") or []
     hospital = plan.get("hospital") or {}
     if hospital.get("latitude") is None or hospital.get("longitude") is None:
@@ -423,7 +428,7 @@ def _facility_map(plan: dict[str, Any]) -> None:
     st.subheader("Facilities")
     top = facilities[0]
     st.caption(
-        f"Dark pin is the hospital. Teal pins are ranked Massachusetts nursing homes. "
+        f"Dark pin is the hospital. Teal pins are ranked United States nursing homes near it. "
         f"Top match: {top.get('facility_name')}."
     )
     map_path = Path("/tmp/clearbed-facility-map.html")
@@ -450,6 +455,7 @@ def _render_plan(stay_id: str, plan: dict[str, Any]) -> None:
                 {
                     "Facility": item["facility_name"],
                     "City": item["city"],
+                    "State": item.get("state") or "",
                     "Miles": item["distance_miles"],
                     "Rating": item["overall_rating"],
                     "Open beds": item["est_open_beds"],

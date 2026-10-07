@@ -263,7 +263,8 @@ def payer_plan(state: AgentState) -> dict[str, Any]:
         "next_actions": [
             "Confirm the payer, member id, and whether a decision is pending. Member id is [NEEDS INPUT].",
             "Do not send a nursing-facility referral while coverage is unresolved.",
-            "Record the authorization or MassHealth pending status before placement calls.",
+            "Record the authorization or state Medicaid pending status before placement calls. "
+            "For this hospital, state Medicaid is MassHealth.",
         ],
         "messages": ["Prepared a payer action for approval."],
     }
@@ -294,7 +295,8 @@ def home_plan(state: AgentState) -> dict[str, Any]:
         "pending_approvals": [],
         "next_actions": [
             "Confirm a homebound finding and a skilled need before ordering home health.",
-            "PCA services are a separate MassHealth path. Do not mix them into a SNF referral.",
+            "Personal care is a separate state Medicaid path. In Massachusetts that path is MassHealth. "
+            "Do not mix it into a SNF referral.",
             "Agency and start-of-care date are [NEEDS INPUT].",
         ],
         "messages": ["Prepared a home-services plan. No facility packet."],
