@@ -1,0 +1,18 @@
+rule_id,priority,min_age,max_age,condition_groups,payer_types,requires_dementia,requires_lives_alone,requires_home_o2,requires_chf_or_copd,barrier_type,probability,avoidable_min,avoidable_max,notes
+R_GUARD_ALONE,10,,,,,1,1,0,0,guardianship_capacity,0.80,5,20,dementia and lives alone
+R_POST_75,20,75,,hip_fracture|stroke,,0,0,0,0,post_acute_placement,0.72,2,9,age >= 75 and hip fracture or stroke
+R_PAYER_NONE,30,,,,none,0,0,0,0,payer_pending,0.92,1,6,no payer on the stay
+R_HOME_O2,40,,,,,0,0,1,1,home_services,0.82,1,4,CHF or COPD with home oxygen
+R_POST_65,50,65,,hip_fracture|stroke|sepsis|pneumonia,,0,0,0,0,post_acute_placement,0.48,2,9,age >= 65 and a major acute condition
+R_PAYER_MCAID,60,,,,medicaid,0,0,0,0,payer_pending,0.50,1,6,medicaid treated as pending-risk
+R_GUARD_DEM,70,,,,,1,0,0,0,guardianship_capacity,0.42,5,20,dementia without the lives-alone flag
+R_HOME_CHRONIC,80,,,,,0,0,0,1,home_services,0.38,1,4,CHF or COPD
+R_AGE_80,90,80,,,,0,0,0,0,post_acute_placement,0.30,2,9,age >= 80 residual placement risk
+R_ALONE_70,100,70,,,,0,1,0,0,guardianship_capacity,0.18,5,20,older adult with the lives-alone proxy
+R_ANY_CHRONIC,110,,,,,0,0,0,1,home_services,0.15,1,4,second pass for chronic lung or heart disease
+R_CANCER_65,45,65,,cancer,,0,0,0,0,post_acute_placement,0.50,2,9,older adult with cancer
+R_ACS,48,65,,acs|heart_failure,,0,0,0,0,post_acute_placement,0.45,2,9,older adult with an acute cardiac admission
+R_RESIDUAL_POST,200,,,,,0,0,0,0,post_acute_placement,0.10,2,9,seeded background placement rate
+R_RESIDUAL_HOME,210,,,,,0,0,0,0,home_services,0.10,1,4,seeded background home-services rate
+R_RESIDUAL_GUARD,220,,,,,0,0,0,0,guardianship_capacity,0.08,5,20,seeded background guardianship rate
+R_NONE,1000,,,,,,,,,none,1.0,0,0,default when no earlier rule wins its coin flip

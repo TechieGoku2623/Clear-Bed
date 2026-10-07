@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: fct_inpatient_stays
+    description: One row per inpatient encounter.
+    columns:
+      - name: stay_id
+        tests: [not_null, unique]
+      - name: patient_id
+        tests: [not_null]
+      - name: admit_ts
+        tests: [not_null]
+      - name: payer_type
+        tests:
+          - accepted_values:
+              arguments:
+                values: [medicare, medicaid, commercial, dual, none]
+  - name: int_expected_los
+    description: Median LOS by condition group and age band.
+    columns:
+      - name: condition_group
+        tests: [not_null]
+      - name: age_band
+        tests: [not_null]
+  - name: fct_stay_labels
+    description: >
+      Synthetic barrier labels from seeds/labeling_rules.csv.
+      Replace with MIMIC-IV admissions.discharge_location when credentialed.
+    columns:
+      - name: stay_id
+        tests: [not_null, unique]
+      - name: barrier_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - post_acute_placement
+                  - payer_pending
+                  - guardianship_capacity
+                  - home_services
+                  - none
+      - name: avoidable_days
+        tests: [not_null]
+      - name: is_stuck
+        tests: [not_null]
+  - name: feat_admission_snapshot
+    description: Admission-time features only. No length of stay and no labels.
+    columns:
+      - name: stay_id
+        tests: [not_null, unique]
+      - name: expected_los_days
+        tests: [not_null]

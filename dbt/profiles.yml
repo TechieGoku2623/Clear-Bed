@@ -1,0 +1,17 @@
+clearbed:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('CLEARBED_WAREHOUSE', 'data/warehouse.duckdb') }}"
+      threads: 4
+    # snowflake:
+    #   type: snowflake
+    #   account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'your_account') }}"
+    #   user: "{{ env_var('SNOWFLAKE_USER', 'your_user') }}"
+    #   password: "{{ env_var('SNOWFLAKE_PASSWORD', '') }}"
+    #   role: "{{ env_var('SNOWFLAKE_ROLE', 'transformer') }}"
+    #   database: "{{ env_var('SNOWFLAKE_DATABASE', 'CLEARBED') }}"
+    #   warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'transforming') }}"
+    #   schema: raw
+    #   threads: 4
