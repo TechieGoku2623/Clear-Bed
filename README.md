@@ -10,7 +10,11 @@ Hospitals lose staffed beds to patients who are medically ready but have nowhere
 
 ## Walkthrough
 
-[![ClearBed walkthrough](docs/screenshots/walkthrough-poster.jpg)](docs/walkthrough.mp4)
+<p align="center">
+  <img src="docs/walkthrough.gif" alt="ClearBed walkthrough" width="920"/>
+</p>
+
+[Play the video](docs/walkthrough.mp4)
 
 [Play the walkthrough](docs/walkthrough.mp4) (37 seconds). It starts on Leadership: census 60, 2 high-risk stays, 60.7 avoidable bed-days, the assumed $2,500 per bed-day, and 14,690 CMS nursing homes across 53 states and territories. It filters the worklist to high risk, opens the Medicare placement stay, and generates a plan. The Boston map sits beside the risk reasons, with the score breakdown, the Medicare three-day citation, and `[NEEDS INPUT]` in the packet. Approve writes a local Sent status. The packet is not transmitted.
 
