@@ -138,6 +138,8 @@ Gender and race are excluded from the model matrix and reported only in `reports
 
 A production deployment would run in a HIPAA-eligible environment under a BAA, with Epic (or another EHR) feeding admissions through SMART on FHIR and HL7 ADT. Discharge disposition from the EHR would replace the synthetic labeling function. Case managers would accept or edit the plan, and those decisions would re-enter the model as a feedback loop. Payer rules would be owned by compliance and re-verified on a schedule. The human approval gate stays.
 
+Engineering conventions for data, approvals, and configuration are in [docs/engineering.md](docs/engineering.md).
+
 ## Project layout
 
 - `src/clearbed/ingest` — Synthea and CMS loaders
