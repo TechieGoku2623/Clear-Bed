@@ -8,6 +8,14 @@ Hospitals lose staffed beds to patients who are medically ready but have nowhere
 
 ![CI](https://github.com/TechieGoku2623/Clear-Bed/actions/workflows/ci.yml/badge.svg)
 
+## Walkthrough
+
+[![ClearBed walkthrough](docs/screenshots/walkthrough-poster.jpg)](docs/walkthrough.mp4)
+
+[Play the walkthrough](docs/walkthrough.mp4) (37 seconds). It starts on Leadership: census 60, 2 high-risk stays, 60.7 avoidable bed-days, the assumed $2,500 per bed-day, and 14,690 CMS nursing homes across 53 states and territories. It filters the worklist to high risk, opens the Medicare placement stay, and generates a plan. The Boston map sits beside the risk reasons, with the score breakdown, the Medicare three-day citation, and `[NEEDS INPUT]` in the packet. Approve writes a local Sent status. The packet is not transmitted.
+
+The recording script, voiceover, and shot list are in [docs/demo_script.md](docs/demo_script.md). Confirm the MHA figures in that script against the current Massachusetts Health & Hospital Association brief before you publish them. The pilot outline is [docs/pilot_proposal.md](docs/pilot_proposal.md). End card: **ClearBed · Free 60-day pilot · Deva Choppa · 617-602-6800**. App scenes show the corner badge **Synthetic patient data — demo.**
+
 ## Architecture
 
 ```mermaid
@@ -84,24 +92,6 @@ The loader reads `data/external/nh_provider_info.csv`. If that file is missing i
 The URL is `CMS_SNF_URL` in `.env`. To refresh the file by hand, download that CSV into `data/external/nh_provider_info.csv` and rerun `python -m clearbed.ingest.cms_snf_loader`. Rows for every US state and territory in the file are kept. Missing coordinates are filled from ZIP centroids. `est_open_beds` is `certified_beds - avg_residents_per_day`, floored at 0. The loaded table is `raw.cms_snf`.
 
 `raw.snf_capabilities_synthetic` is a seeded synthetic acceptance profile. It is not reported by CMS.
-
-## Demo video
-
-The three-minute recording script, voiceover, and the three AI shot prompts (intro corridor, case manager, sunrise empty bed) are in [docs/demo_script.md](docs/demo_script.md). Record the real app for every product scene. Export three cuts from the same recording: the full 3:00, a 60-second LinkedIn cut, and a 30-second teaser.
-
-End card, exactly:
-
-**ClearBed · Free 60-day pilot · Deva Choppa · 617-602-6800**
-
-App scenes already show the corner badge **Synthetic patient data — demo.** Confirm the MHA figures in the intro overlays against the current Massachusetts Health & Hospital Association brief before you publish. The one-page pilot outline is [docs/pilot_proposal.md](docs/pilot_proposal.md).
-
-## Screenshots
-
-<!-- Replace these placeholders after a demo recording. -->
-
-- Worklist: `docs/screenshots/worklist.png`
-- Patient plan: `docs/screenshots/patient.png`
-- Leadership dashboard: `docs/screenshots/dashboard.png`
 
 ## Model card summary
 
